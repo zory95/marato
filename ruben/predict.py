@@ -1,14 +1,14 @@
-import pandas as pd
+import os
+
+import matplotlib.pyplot as plt
 import numpy as np
 from keras.engine.saving import model_from_json
-from get_data import get_data, input_vars, output_var
-import os
-import matplotlib.pyplot as plt
+
+from get_data import *
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-# Read data and download from AEMET
-data = get_data("data/COPEDICATClinicSympt_DATA_2020-12-17_1642.csv")
+input_vars, output_var, data = get_data(file)
 input_data = data[input_vars]
 
 print("Making predictions")
@@ -29,11 +29,11 @@ print("Done predicting ")
 
 l = []
 l2 = []
-for i in [x * 0.001 for x in range(0, 1000)]:
+for i in [x * 0.01 for x in range(0, 100)]:
     frame = pd.DataFrame()
     func = np.vectorize(lambda x: x > i)
     prediction2 = func(prediction)
-    frame.insert(0, "covid-real", data["covid"])
+    frame.insert(0, "covid-real", data[output_var])
     frame.insert(0, "covid-pred2", prediction2)
 
     mismatch = len(frame.loc[frame["covid-pred2"] > frame["covid-real"]])
@@ -42,14 +42,11 @@ for i in [x * 0.001 for x in range(0, 1000)]:
     l2.append(mismatch2)
 
     # pd.set_option('display.max_rows', 2000)
-    # print(input_data)
+    # print(frame)
 
-print(np.argmin(l)/1000)
-print(min(l))
-print(np.argmin(l2)/1000)
-print(min(l2))
-plt.plot(l)
-plt.plot(l2)
+plt.plot(l, label="Falso positivo")
+plt.plot(l2, label="Falso negativo")
+plt.legend()
 plt.show()
 
 print("All done")
