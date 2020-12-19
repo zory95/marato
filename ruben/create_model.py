@@ -11,14 +11,18 @@ h5_name_aux = "models/modelaux.h5"
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-input_vars, output_var, data = get_data(file)
+# input_vars, output_var, data = get_data(file)
+#
+# # Split train set and validation set
+# data_train, data_valid = train_test_split(data, test_size=0.1, shuffle=False)
+# data_test, data_valid = train_test_split(data_valid, test_size=0.5, shuffle=False)
+
+input_vars, output_var, data_train = get_data(train_file)
+input_vars, output_var, data_valid = get_data(val_file)
+input_vars, output_var, data_test = get_data(test_file)
 
 best_models = {}
 best_losses = {}
-
-# Split train set and validation set
-data_train, data_valid = train_test_split(data, test_size=0.1, shuffle=False)
-data_test, data_valid = train_test_split(data_valid, test_size=0.5, shuffle=False)
 
 input_train = data_train[input_vars]
 input_valid = data_valid[input_vars]
@@ -58,7 +62,7 @@ for topology in topologies:
                                        verbose=0)
 
     # Train model
-    model.fit(input_train, output_train, epochs=1000, batch_size=1, shuffle=False,
+    model.fit(input_train, output_train, epochs=1000, batch_size=1, shuffle=True,
               validation_data=(input_valid, output_valid), verbose=0,
               callbacks=[earlyStopping, mcp_save, reduce_lr_loss])
 
