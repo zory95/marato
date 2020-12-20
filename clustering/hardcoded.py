@@ -2,7 +2,7 @@ import pandas as pd
 
 df = pd.read_csv('../data/covid-cleaned.csv', index_col='participant_id')
 
-df = df.fillna(0) #.applymap(lambda x: 0 if x == 0.5 else x)
+df = df.fillna(0)
 df['final_diagnosis_code'] = df['final_diagnosis_code'].apply(lambda x: 0 if x!=1 else x)
 
 smokers = df['smokers_home'] != 0

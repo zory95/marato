@@ -1,5 +1,5 @@
 from scipy.cluster import hierarchy
-from scipy.spatial.distance import pdist, squareform
+from scipy.spatial.distance import pdist
 import matplotlib.pyplot as plt
 import pandas as pd
 
