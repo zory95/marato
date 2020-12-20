@@ -1,0 +1,57 @@
+```{r}
+library(dplyr)
+library("Rcmdr")
+library(caret)
+library(MLmetrics)
+covid <- read.csv(file = '../data/covid-cleaned.csv')
+```
+
+```{r}
+set.seed(1)
+covid$participant_id <- NULL
+training.samples <- covid$final_diagnosis_code %>%
+  createDataPartition(p = 0.9, list = FALSE)
+train.data  <- covid[training.samples, ]
+test.data <- covid[-training.samples, ]
+
+LinealModel = lm(final_diagnosis_code ~ ., data=train.data)
+summary(LinealModel)
+
+```
+
+
+```{r}
+
+library("ROCit")
+
+predictions <- predict(LinealModel, test.data)
+
+prediction_frame <- data.frame(x1=predictions)
+
+test.data <- test.data[complete.cases(prediction_frame), ]
+
+prediction_frame <- prediction_frame[complete.cases(prediction_frame), ]
+test_output <- data.frame( R2 = R2(prediction_frame, test.data$final_diagnosis_code),
+            RMSE = RMSE(prediction_frame, test.data$final_diagnosis_code),
+            MAE = MAE(prediction_frame, test.data$final_diagnosis_code))
+
+
+ROCit_obj <- rocit(score=prediction_frame,class=test.data$final_diagnosis_code)
+plot(ROCit_obj)
+```
+
+
+We do a second prediction for the day 2020-09-13 for mens of more than 90 years
+Both models predict around 20 cases but the correct value is 10.
+```{r}
+
+library(factoextra)
+
+km.res <- kmeans(completerecords, 4, nstart = 25)
+print(km.res)
+```
+
+
+```{r}
+km.res$size
+```

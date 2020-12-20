@@ -1,0 +1,296 @@
+```{r}
+covid <- read.csv(file = '../data/COPEDICATClinicSympt_DATA_2020-12-17_1642.csv')
+```
+
+```{r}
+covid$participant_id <- NULL
+covid$id <- NULL
+covid$recruit_date <- NULL
+covid$postal_code <- NULL
+covid$row_school <- NULL
+covid$province <- NULL
+covid$family_country <- NULL
+covid$city <- NULL
+covid$m2 <- NULL
+covid$rooms <- NULL
+covid$date_fever <- as.Date(covid$date_fever)
+covid$end_fever <- as.Date(covid$end_fever)
+covid$num_fever <- covid$end_fever - covid$date_fever + 1
+covid$num_fever[(covid$num_fever < 0)] <- 0
+covid$num_fever[(covid$end_fever > covid$survey_end_date)] <- 0
+covid$num_fever <- as.integer(covid$num_fever)
+
+covid$date_fever <- NULL
+covid$end_fever <- NULL
+covid$floor_level <- NULL
+covid$comments <- NULL
+covid$name_initials_of_the_inter <- NULL
+covid$survey_end_date <- NULL
+covid$flu_date <- NULL
+covid$other <- NULL
+covid$obesity <- NULL
+covid$bacterial_type <- NULL
+covid$other_viruses_text <- NULL
+covid$persons_home <- NULL
+covid$simptomatology_date <- NULL
+covid$total_days_fever <- NULL
+covid$shock_first <- NULL
+covid$other_simptomatology_lliure <- NULL
+covid$sero_date <- NULL
+covid$cxr_date <- NULL
+covid$sat_hb_o2_value <- NULL
+covid$pcr_date <- NULL
+covid$ag_test_mark <- NULL
+covid$otherviruses_date <- NULL
+covid$adm_date <- NULL
+covid$discharge_date <- NULL
+covid$final_diagnosis_text <- NULL
+covid$antigenic_date <- NULL
+covid$thoracic_ct_date <- NULL
+covid$hepato_first <- NULL
+covid$spleno_first <- NULL
+covid$sero <- NULL
+covid$sat_hb_o2 <- NULL
+
+covid = subset(covid, final_diagnosis_code!=2)
+covid$final_diagnosis_code[covid$final_diagnosis_code == 3] <- 0
+covid$tos[covid$symptoms_binary == 0] <- 2
+covid$dysphonia[covid$symptoms_binary == 0] <- 2
+covid$resp[covid$symptoms_binary == 0] <- 2
+covid$tachypnea[covid$symptoms_binary == 0] <- 2
+covid$ausc_resp[covid$symptoms_binary == 0] <- 1
+covid$odynophagia[covid$symptoms_binary == 0] <- 2
+covid$nasal_congestion[covid$symptoms_binary == 0] <- 2
+covid$headache[covid$symptoms_binary == 0] <- 2
+covid$conjuntivitis[covid$symptoms_binary == 0] <- 2
+covid$gi_symptoms[covid$symptoms_binary == 0] <- 2
+covid$abdominal_pain[covid$symptoms_binary == 0] <- 2
+covid$vomiting[covid$symptoms_binary == 0] <- 2
+covid$dyarrea[covid$symptoms_binary == 0] <- 2
+covid$dermatologic[covid$symptoms_binary == 0] <- 2
+covid$hepato[covid$symptoms_binary == 0] <- 2
+covid$splenomegaly[covid$symptoms_binary == 0] <- 2
+covid$hemorrhagies[covid$symptoms_binary == 0] <- 2
+covid$neuro[covid$symptoms_binary == 0] <- 2
+covid$shock[covid$symptoms_binary == 0] <- 2
+covid$taste_smell[covid$symptoms_binary == 0] <- 2
+covid$smell[covid$symptoms_binary == 0] <- 2
+
+covid$dysphonia[covid$dysphonia == 3] <- 1.5
+covid$dysphonia[covid$resp == 3] <- 1.5
+covid$odynophagia[covid$odynophagia == 3] <- 1.5
+covid$nasal_congestion[covid$nasal_congestion == 3] <- 1.5
+covid$fatiga[covid$fatiga == 3] <- 1.5
+covid$headache[covid$headache == 3] <- 1.5
+covid$conjuntivitis[covid$conjuntivitis == 3] <- 1.5
+covid$abdominal_pain[covid$abdominal_pain == 3] <- 1.5
+covid$dyarrea[covid$dyarrea == 3] <- 1.5
+covid$hepato[covid$hepato == 3] <- 1.5
+covid$splenomegaly[covid$splenomegaly == 3] <- 1.5
+covid$hemorrhagies[covid$hemorrhagies == 3] <- 1.5
+covid$resp[covid$resp == 3] <- 1.5
+
+
+covid$fever[is.na(covid$fever)] <- 1.5
+covid$abdominal_pain[is.na(covid$abdominal_pain)] <- 1.5
+covid$vomiting[is.na(covid$vomiting)] <- 1.5
+covid$dyarrea[is.na(covid$dyarrea)] <- 1.5
+covid$smokers_home[is.na(covid$smokers_home)] <- 1.5
+covid$odynophagia[is.na(covid$odynophagia)] <- 1.5
+covid$fatiga[is.na(covid$fatiga)] <- 1.5
+covid$dermatologic[is.na(covid$dermatologic)] <-1.5
+covid$hepato[is.na(covid$hepato)] <- 1.5
+covid$shock[is.na(covid$shock)] <- 0.5
+covid$hemorrhagies[is.na(covid$hemorrhagies)] <- 1.5
+covid$school_confirmed[is.na(covid$school_confirmed)] <- 0.5
+covid$home_confirmed[is.na(covid$home_confirmed)] <- 0.5
+covid$tos[is.na(covid$tos)] <- 1.5
+covid$dysphonia[is.na(covid$dysphonia)] <- 1.5
+covid$resp[is.na(covid$resp)] <- 1.5
+covid$tachypnea[is.na(covid$tachypnea)] <- 1.5
+covid$ausc_resp[is.na(covid$ausc_resp)] <- 1.5
+covid$num_fever[is.na(covid$num_fever)] <- 0
+covid$housemember_symptoms___1[(covid$housemember_symptoms___1 == 1) ||
+                               (covid$housemember_symptoms___2 == 1) ||
+                               (covid$housemember_symptoms___3 == 1) ||
+                               (covid$housemember_symptoms___4 == 1) ||
+                               (covid$housemember_symptoms___5 == 1)] <- 1
+covid$housemember_symptoms___2 <- NULL
+covid$housemember_symptoms___3 <- NULL
+covid$housemember_symptoms___4 <- NULL
+covid$housemember_symptoms___5 <- NULL
+
+covid$highest_fever[covid$fever == 2] <- 0
+
+
+covid$tos[is.na(covid$tos)] <- 1.5
+covid$dysphonia[is.na(covid$dysphonia)] <- 1.5
+covid$resp[is.na(covid$resp)] <- 1.5
+covid$tachypnea[is.na(covid$tachypnea)] <- 1.5
+covid$ausc_resp[is.na(covid$ausc_resp)] <- 1.5
+covid$odynophagia[is.na(covid$odynophagia)] <- 1.5
+covid$nasal_congestion[is.na(covid$nasal_congestion)] <- 1.5
+covid$headache[is.na(covid$headache)] <- 1.5
+covid$conjuntivitis[is.na(covid$conjuntivitis)] <- 1.5
+covid$gi_symptoms[is.na(covid$gi_symptoms)] <- 1.5
+covid$abdominal_pain[is.na(covid$abdominal_pain)] <- 1.5
+covid$vomiting[is.na(covid$vomiting)] <- 1.5
+covid$dyarrea[is.na(covid$dyarrea)] <- 1.5
+covid$dermatologic[is.na(covid$dermatologic)] <- 1.5
+covid$hepato[is.na(covid$hepato)] <-1.5
+covid$splenomegaly[is.na(covid$splenomegaly)] <- 1.5
+covid$hemorrhagies[is.na(covid$hemorrhagies)] <- 1.5
+covid$neuro[is.na(covid$neuro)] <- 1.5
+covid$shock[is.na(covid$shock)] <- 1.5
+covid$taste_smell[is.na(covid$taste_smell)] <- 1.5
+covid$smell[is.na(covid$smell)] <- 1.5
+
+covid$smokers_home <- 2 - covid$smokers_home            
+covid$fever <- 2 - covid$fever            
+covid$tos <- 2 - covid$tos
+covid$dysphonia <- 2 - covid$dysphonia             
+covid$resp <- 2 - covid$resp                          
+covid$ausc_resp <-  covid$ausc_resp - 1                    
+covid$odynophagia <- 2 - covid$odynophagia                   
+covid$nasal_congestion <- 2 - covid$nasal_congestion             
+covid$fatiga <- 2 - covid$fatiga                         
+covid$headache  <- 2 - covid$headache                 
+covid$conjuntivitis <- 2 - covid$conjuntivitis
+covid$abdominal_pain <- 2 - covid$abdominal_pain                
+covid$vomiting <-  2 -    covid$vomiting                 
+covid$dyarrea <-  2 - covid$dyarrea                  
+covid$hepato <- 2 - covid$hepato                        
+covid$splenomegaly <-  2 - covid$splenomegaly               
+covid$hemorrhagies<- 2 -   covid$hemorrhagies              
+                          
+                
+
+```
+
+We download Socrata data from the open data web. We filter the data from August
+to now, taking only the positives
+```{r}
+filtered = covid
+filtered$bus <- NULL
+filtered$survey_type <- NULL
+filtered$sports_type <- NULL
+filtered$sports <- NULL
+#filtered$smokers_home <- NULL
+filtered$inclusion_criteria <- NULL
+filtered$tachypnea_first <- NULL
+filtered$dyspnea_first <- NULL
+filtered$auscult_first <- NULL
+filtered$fatigue_first <- NULL
+filtered$disfonia_first <- NULL
+filtered$conj_first <- NULL
+filtered$rash <- NULL
+filtered$inflam_oral <- NULL
+filtered$inflam_periferic <- NULL
+filtered$crup_first <- NULL
+filtered$ocular_first <- NULL
+filtered$skin_first <- NULL
+filtered$lymph_first <- NULL
+filtered$hemorr_first <- NULL
+filtered$irritability <- NULL
+filtered$neuro_first <- NULL
+filtered$confusion <- NULL
+filtered$nuchal_stiffness <- NULL
+filtered$wheezing <- NULL
+filtered$crackles <- NULL
+filtered$odynophagia_first <- NULL
+filtered$headache_first <- NULL
+filtered$irritability_first <- NULL
+filtered$seizures <- NULL
+filtered$hypotonia <- NULL
+filtered$peripheral_paralysis <- NULL
+filtered$taste_first <- NULL
+filtered$smell_first <- NULL
+filtered$other_simptomatology <- NULL
+filtered$other_simptomatology_3 <- NULL
+filtered$other_simptomatology_4 <- NULL
+filtered$sero_method <- NULL
+filtered$sero_type_response_2 <- NULL
+filtered$sero_type_response <- NULL
+filtered$sero_response <- NULL
+filtered$cough_first <- NULL
+filtered$cxr2 <- NULL
+filtered$ct2 <- NULL
+filtered$pcr_result <- NULL
+filtered$pcr_type <- NULL
+filtered$pcr_performed <- NULL
+filtered$antigenic_performed <- NULL
+filtered$antigenic_result <- NULL
+filtered$antigenic_sample <- NULL
+filtered$adenopathies <- NULL
+filtered$adeno_result <- NULL
+filtered$flu_a_result <- NULL
+filtered$flu_b_result <- NULL
+filtered$picu_adm <- NULL
+filtered$crup <- NULL
+filtered$nasal_first <- NULL
+filtered$ocular_pain <- NULL
+filtered$othervirus_performed <- NULL
+filtered$vrs_result <- NULL
+filtered$coviral_type <- NULL
+filtered$sero_response <- NULL
+filtered$final_outcome_complete <- NULL
+filtered$final_classification_of_th <- NULL
+filtered$final_outcome <- NULL
+filtered$coviral_type <- NULL
+filtered$adm_hospital <- NULL
+filtered$clinical_and_diagnosis_data_at_the_admission_time_complete <- NULL
+filtered$gi_first <- NULL
+filtered$cxr <- NULL
+filtered$ct <- NULL
+filtered$cardiopathy___1 <- NULL
+filtered$cardiopathy___2 <- NULL
+filtered$cardiopathy___3 <- NULL
+filtered$pulmonar_disease___2 <- NULL
+filtered$pulmonar_disease___3 <- NULL
+filtered$hypertension___1 <- NULL
+filtered$hypertension___2 <- NULL
+filtered$hypertension___3 <- NULL
+filtered$asma___2<- NULL
+filtered$asma___3<- NULL
+filtered$nephrology___1<- NULL
+filtered$nephrology___2<- NULL
+filtered$nephrology___3<- NULL
+filtered$hepatic___1<- NULL
+filtered$hepatic___2<- NULL
+filtered$hepatic___3<- NULL
+filtered$neurologic___1<- NULL
+filtered$neurologic___2<- NULL
+filtered$neurologic___3<- NULL
+filtered$diabetes___1<- NULL
+filtered$diabetes___2<- NULL
+filtered$diabetes___3<- NULL
+filtered$tuberculosi___1<- NULL
+filtered$tuberculosi___2<- NULL
+filtered$tuberculosi___3<- NULL
+filtered$idp___1<- NULL
+filtered$idp___2<- NULL
+filtered$idp___3<- NULL
+filtered$neoplasia___1<- NULL
+filtered$neoplasia___2<- NULL
+filtered$neoplasia___3<- NULL
+filtered$kawasaki___1<- NULL
+filtered$kawasaki___2<- NULL
+filtered$kawasaki___3<- NULL
+filtered$inflammation___1<- NULL
+filtered$inflammation___2<- NULL
+filtered$inflammation___3<- NULL
+filtered$vih_others___1<- NULL
+filtered$vih_others___2<- NULL
+filtered$vih_others___3<- NULL
+filtered$bacterial_infection<- NULL
+filtered$coviral_binary<- NULL
+filtered$symptoms_binary<-NULL
+filtered$sex<-NULL
+filtered$comorbi_binary <- NULL
+filtered$comorbidities_complete <- NULL
+filtered$school_symptoms_member___5 <- NULL
+filtered$tachypnea <- NULL
+
+write.csv(filtered, file = '../data/covid-cleaned.csv', row.names = FALSE)
+
+```
